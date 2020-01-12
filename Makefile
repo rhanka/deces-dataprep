@@ -15,6 +15,7 @@ FILES_TO_PROCESS=deces-\d{4}(|-m\d.*).txt.gz
 DATAGOUV_CATALOG = ${DATA_DIR}/${DATAGOUV_DATASET}.datagouv.list
 S3_BUCKET = ${DATAGOUV_DATASET}
 S3_CATALOG = ${DATA_DIR}/${DATAGOUV_DATASET}.s3.list
+export ES_BONSAI
 
 dummy               := $(shell touch artifacts)
 include ./artifacts
@@ -32,7 +33,7 @@ backend:
 	@cp artifacts backend/artifacts
 	@mkdir backend/upload
 	@chmod 777 backend/upload
-	@curl https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20 191209-182920/deces-1970.txt | gzip > backend/upload/deces-1970.txt.gz
+	@curl https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-182920/deces-1970.txt | gzip > backend/upload/deces-1970.txt.gz
 	@cp docker-compose-local.yml backend/docker-compose-local.yml
 	@echo "export ES_NODES=1" >> backend/artifacts
 	@echo "export PROJECTS=${PWD}/projects" >> backend/artifacts
