@@ -30,6 +30,9 @@ backend:
 	@echo configuring matchID
 	@${GIT} clone https://github.com/matchid-project/backend backend
 	@cp artifacts backend/artifacts
+	@mkdir backend/upload
+	@chmod 777 backend/upload
+	@curl https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20 191209-182920/deces-1970.txt | gzip > backend/upload/deces-1970.txt.gz
 	@cp docker-compose-local.yml backend/docker-compose-local.yml
 	@echo "export ES_NODES=1" >> backend/artifacts
 	@echo "export PROJECTS=${PWD}/projects" >> backend/artifacts
@@ -40,6 +43,10 @@ dev: config backend
 
 up:
 	${MAKE} -C backend backend elasticsearch wait-backend wait-elasticsearch
+
+recipe-bonsai:
+	@curl -XDELETE https://${ES_BONSAI}:443/deces
+	${MAKE} -C backend recipe-run RECIPE=dataprep_personnes-dedecees_bonsai
 
 recipe-run:
 	${MAKE} -C backend recipe-run RECIPE=${RECIPE}
@@ -56,6 +63,7 @@ watch-run:
 			sleep 10 ;\
 		fi ; ((timeout--)); done ; exit $$ret
 	@find backend/log/ -iname '*dataprep_personnes-dedecees_search*' | sort | tail -1 | xargs tail
+
 backup:
 	${MAKE} -C backend elasticsearch-backup
 
@@ -67,6 +75,9 @@ down:
 
 clean: down
 	sudo rm -rf backend frontend ${DATA_DIR}
+
+test: config backend up recipe-bonsai down
+	@echo test ended with succes !!!
 
 all: config backend up recipe-run watch-run down backup s3-push clean
 	@echo ended with succes !!!

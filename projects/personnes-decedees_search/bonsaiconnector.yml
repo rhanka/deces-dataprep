@@ -1,0 +1,9 @@
+connectors:
+  elasticsearch:
+    type: elasticsearch
+    host: !ENV ${ES_BONSAI}
+    thread_count: 2
+    chunk: 10000
+    chunk_search: 20
+    port: 443
+    scheme: https
