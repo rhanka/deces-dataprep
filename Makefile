@@ -77,7 +77,8 @@ down:
 clean: down
 	sudo rm -rf backend frontend ${DATA_DIR}
 
-test: backend config up recipe-bonsai down
+test: backend config up recipe-bonsai
+	@sleep 20
 	@echo test ended with succes !!!
 
 all: backend config up recipe-run watch-run down backup s3-push clean

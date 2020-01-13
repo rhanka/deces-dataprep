@@ -3,6 +3,7 @@ datasets:
     # death people reference (fake - test sample)
     # fixed with format with no header
     connector: upload
+    skiprows: 17500
     table: deces-1970.txt.gz
     compression: gzip
     type: fwf
